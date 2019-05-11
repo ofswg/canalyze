@@ -1,3 +1,4 @@
+#include "headers/struct.h"
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -7,8 +8,8 @@ int main(int argc, const char **argv) {
     return 0;
   }
   const char *file = argv[1];
-  FILE *f = fopen(file, "r");
-  if (f == NULL) {
+  FILE *fp = fopen(file, "r");
+  if (fp == NULL) {
     printf("Can't open file for read\n");
     return -1;
   }
