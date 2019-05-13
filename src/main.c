@@ -1,4 +1,5 @@
 #include "headers/fileInfo.h"
+#include "headers/process.h"
 #include "headers/struct.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -16,10 +17,8 @@ int main(int argc, const char **argv) {
   }
 
   stringArray strArray;
-
   strArray.capacity = (unsigned int)fileGetString(fp);
-
-  printf("%u\n", strArray.capacity);
+  canalyse(&strArray);
 
   fclose(fp);
   free(strArray.string);
