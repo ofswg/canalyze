@@ -42,7 +42,7 @@ size_t removeSpacesAtBegin(char *string) {
       break;
     i++;
   }
-  ssize_t k = 0;
+  size_t k = 0;
   for (int j = i; j < ssize + 1; j++) {
     string[k] = string[j];
     k++;
