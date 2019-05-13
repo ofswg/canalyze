@@ -32,4 +32,6 @@ typedef struct {
   unsigned int capacity;
 } functionArray;
 
+functionArray getFunctions(stringArray *strArray);
+
 #endif

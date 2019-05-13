@@ -4,8 +4,8 @@
 
 int canalyse(stringArray *strArray) {
 
-  // functionArray funcArray = getFunctions(strArray);
-  // printFunctions(*strArray, funcArray);
+  functionArray funcArray = getFunctions(strArray);
+  printFunctions(*strArray, funcArray);
 
   return 0;
 }
