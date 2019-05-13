@@ -3,8 +3,10 @@
 
 #include "struct.h"
 #include <stdio.h>
+#include <string.h>
 
 size_t fileGetContents(FILE *fp, sString *string);
 size_t fileGetString(FILE *fp);
+size_t removeSpacesAtBegin(char *string);
 
 #endif

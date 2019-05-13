@@ -18,8 +18,10 @@ int main(int argc, const char **argv) {
 
   stringArray strArray;
   strArray.capacity = (unsigned int)fileGetString(fp);
-  canalyse(&strArray);
+  strArray.string = calloc(strArray.capacity, sizeof(sString));
+  fileGetContents(fp, strArray.string);
 
+  canalyse(&strArray);
   fclose(fp);
   free(strArray.string);
   return 0;
