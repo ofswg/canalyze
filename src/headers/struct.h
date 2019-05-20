@@ -33,5 +33,6 @@ typedef struct {
 } functionArray;
 
 functionArray getFunctions(stringArray *strArray);
+int getCallTimes(stringArray strArray, char *function_name);
 
 #endif

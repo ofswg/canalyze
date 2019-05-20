@@ -5,8 +5,11 @@
 int canalyse(stringArray *strArray) {
 
   functionArray funcArray = getFunctions(strArray);
-  printf("Functions\t\t Call times\n");
-
+  printf("Function:\t\tCall times:\n\n");
+  for (size_t i = 0; i < funcArray.capacity; i++) {
+    printf("%s\t\t\t%d\n", funcArray.array[i].function_name,
+           getCallTimes(*strArray, funcArray.array[i].function_name) - 1);
+  }
   printf("\n");
 
   return 0;

@@ -47,17 +47,32 @@ char *isFunction(stringArray strArray, int string_number, int length) {
 
 functionArray getFunctions(stringArray *strArray) {
   functionArray result;
+  result.array = calloc(8, sizeof(sFunction));
 
-  size_t length = 0;
+  size_t length = 0, resulted_array_counter = 0;
   for (size_t i = 0; i < strArray->capacity; i++) {
     char *nameFunction;
     length = strlen(strArray->string[i].text);
     if (strArray->string[i].text[length - 1] == '{') {
       if ((nameFunction = isFunction(*strArray, (int)i, (int)length)) != NULL) {
-        printf("%s\n", nameFunction);
+        result.array[resulted_array_counter].function_name =
+            calloc((size_t)strlen(nameFunction), sizeof(char));
+        strcpy(result.array[resulted_array_counter].function_name,
+               nameFunction);
+        resulted_array_counter++;
       }
     }
   }
-
+  result.capacity = (unsigned int)resulted_array_counter;
   return result;
+}
+
+int getCallTimes(stringArray strArray, char *function_name) {
+  int call_times = 0;
+  for (size_t j = 0; j < strArray.capacity; j++) {
+    if (strstr(strArray.string[j].text, function_name) != NULL) {
+      call_times++;
+    }
+  }
+  return call_times;
 }
