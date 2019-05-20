@@ -5,13 +5,9 @@
 int canalyse(stringArray *strArray) {
 
   functionArray funcArray = getFunctions(strArray);
-  printFunctions(*strArray, funcArray);
+  printf("Functions\t\t Call times\n");
+
+  printf("\n");
 
   return 0;
-}
-
-void printFunctions(stringArray strArray, functionArray funcArray) {
-  printf("Functions\t Call times\n");
-  /* Code */
-  printf("\n");
 }
