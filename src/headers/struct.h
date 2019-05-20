@@ -32,6 +32,7 @@ typedef struct {
   unsigned int capacity;
 } functionArray;
 
-int getFunctions(stringArray *strArray, char *inputFunction);
+functionArray getFunctions(stringArray *strArray);
+int getCallTimes(stringArray strArray, char *function_name);
 
 #endif

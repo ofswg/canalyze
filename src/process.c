@@ -1,17 +1,16 @@
 #include "headers/process.h"
 #include "headers/struct.h"
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#include "stdio.h"
 
-int canalyse(stringArray *strArray, char *inputFunction) {
-  printf("\nResult:\n");
-  for (size_t i = 0; i < strArray->capacity; i++) {
-    if (strstr(strArray->string[i].text, inputFunction) != NULL) {
-      printf("%d: %s\n", (int)i, strArray->string[i].text);
-    } else {
-      continue;
-    }
+int canalyse(stringArray *strArray) {
+
+  functionArray funcArray = getFunctions(strArray);
+  printf("Function:\t\tCall times:\n\n");
+  for (size_t i = 0; i < funcArray.capacity; i++) {
+    printf("%s\t\t\t%d\n", funcArray.array[i].function_name,
+           getCallTimes(*strArray, funcArray.array[i].function_name) - 1);
   }
+  printf("\n");
+
   return 0;
 }

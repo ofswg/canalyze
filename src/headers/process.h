@@ -3,6 +3,6 @@
 
 #include "struct.h"
 
-int canalyse(stringArray *strArray, char *inputFunction);
+int canalyse(stringArray *strArray);
 
 #endif
