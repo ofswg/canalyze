@@ -17,9 +17,10 @@ int main(int argc, const char **argv) {
   }
 
   stringArray strArray;
-  strArray.capacity = (unsigned int)fileGetString(fp);
+  strArray.capacity =
+      (unsigned int)fileGetString(fp); // Количество строк в файле
   strArray.string = calloc(strArray.capacity, sizeof(sString));
-  fileGetContents(fp, strArray.string);
+  fileGetContents(fp, strArray.string); // Содержимое каждой строки файла
 
   canalyse(&strArray);
   fclose(fp);
