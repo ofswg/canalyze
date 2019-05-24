@@ -19,14 +19,14 @@ typedef struct {
   type types[2];              // Тип строки
 } sString;
 
-// Хранит информацию о переменной
+/* Хранит информацию о переменной
 
 typedef struct {
   char *variable_name;        // Имя переменной
   char *variable_value;       // Значение
   unsigned int string_number; // Номер строки с переменной
   type types;                 // Тип переменной
-} sVariable;
+} sVariable; */
 
 // Хранит информацию о функции
 
@@ -46,10 +46,10 @@ typedef struct {
   unsigned int capacity;
 } functionArray;
 
-typedef struct {
+/* typedef struct {
   sVariable *array;
   unsigned int capacity;
-} variableArray;
+} variableArray; */
 
 functionArray getFunctions(stringArray *strArray);
 int getCallTimes(stringArray strArray, char *function_name);

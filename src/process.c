@@ -10,7 +10,7 @@ int canalyse(stringArray *strArray) {
     return 0;
   }
 
-  printf("Function:\t\tCall times:\n\n");
+  printf("\nFunction:\t\tCall times:\n");
   for (size_t i = 0; i < funcArray.capacity; i++) {
     printf("%s\t\t\t%d\n", funcArray.array[i].function_name,
            getCallTimes(*strArray, funcArray.array[i].function_name) - 1);
