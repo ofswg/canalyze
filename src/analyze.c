@@ -4,13 +4,17 @@
 #include <stdlib.h>
 #include <string.h>
 
-char *isFunction(stringArray strArray, int string_number, int length) {
+char *isFunction(stringArray strArray, int string_number, int length,
+                 int *close_bracket) {
   char *nameF = NULL;
   int open_parameter_bracket, space_in_remaining_line;
 
   for (size_t i = 0; i < length; i++) { // Получаем расположение скобки в строке
     if (strArray.string[string_number].text[i] == '(') {
       open_parameter_bracket = i;
+    }
+    if (strArray.string[string_number].text[length - 1] == '{') {
+      *close_bracket = 1;
     }
   }
 
@@ -65,10 +69,12 @@ functionArray getFunctions(stringArray *strArray) {
     if (strchr(strArray->string[i].text, '(') != NULL &&
         (strArray->string[i].text[length - 1] == '{' ||
          strArray->string[i + 1].text[0] == '{')) {
-      // Если в конце строки стоит { или в начале следующей строки стоит {
-      if ((nameFunction = isFunction(*strArray, (int)i, (int)length)) != NULL) {
+      // Если в строке есть ( и в конце строки стоит { или в начале следующей
+      // строки стоит {
+      int close_bracket = 0;
+      if ((nameFunction = isFunction(*strArray, (int)i, (int)length,
+                                     &close_bracket)) != NULL) {
         // Если в строке есть функция - вернет название функции, иначе NULL
-
         if (nameFunction[0] == '*') {
           // Если функция возвращает указатель на какой-то тип данных
           nameFunction[0] = ' ';
@@ -79,12 +85,33 @@ functionArray getFunctions(stringArray *strArray) {
             calloc((size_t)strlen(nameFunction), sizeof(char));
         strcpy(result.array[resulted_array_counter].function_name,
                nameFunction);
+        size_t k = 0, step = i;
+        unsigned int open_bracket_count = close_bracket,
+                     close_bracket_count = 0, last_bracket = 0;
+        while (k == 0) { // Подсчет открывающий и закрывающих скобок
+          if (strchr(strArray->string[step].text, '{') != NULL) {
+            open_bracket_count++;
+          } else if (strchr(strArray->string[step].text, '}') != NULL) {
+            close_bracket_count++;
+            last_bracket = (int)step;
+          } else if (open_bracket_count == close_bracket_count) {
+            k = 1;
+          }
+          step++;
+          if (step == strArray->capacity) {
+            k = 1;
+          }
+        }
+
+        printf("%s %d\n", nameFunction, last_bracket);
 
         resulted_array_counter++; // Счетчик кол-ва функций
       }
     }
   }
+
   result.capacity = (unsigned int)resulted_array_counter;
+
   return result;
 }
 
