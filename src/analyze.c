@@ -34,9 +34,15 @@ char *isFunction(stringArray strArray, int string_number, int length) {
       NULL) { // Проверка на наличие пробела
     for (size_t i = 0; i < space_in_remaining_line + 1; i++) {
       for (size_t j = 0; j < open_parameter_bracket; j++) {
+        if (strArray.string[string_number].text[j] == '=') {
+          return NULL;
+        }
         strArray.string[string_number].text[j] = // "int main" -> "main"
             strArray.string[string_number].text[j + 1];
       }
+    }
+    if (strArray.string[string_number].text[0] == '(') {
+      return NULL;
     }
     nameF = (char *)calloc((size_t)strlen(strArray.string[string_number].text),
                            sizeof(char));
@@ -56,8 +62,9 @@ functionArray getFunctions(stringArray *strArray) {
   for (size_t i = 0; i < strArray->capacity - 1; i++) {
     char *nameFunction;
     length = strlen(strArray->string[i].text);
-    if (strArray->string[i].text[length - 1] == '{' ||
-        strArray->string[i + 1].text[0] == '{') {
+    if (strchr(strArray->string[i].text, '(') != NULL &&
+        (strArray->string[i].text[length - 1] == '{' ||
+         strArray->string[i + 1].text[0] == '{')) {
       // Если в конце строки стоит { или в начале следующей строки стоит {
       if ((nameFunction = isFunction(*strArray, (int)i, (int)length)) != NULL) {
         // Если в строке есть функция - вернет название функции, иначе NULL

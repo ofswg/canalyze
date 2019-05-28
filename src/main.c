@@ -1,3 +1,4 @@
+#include "headers/colors.h"
 #include "headers/fileInfo.h"
 #include "headers/process.h"
 #include "headers/struct.h"
@@ -6,13 +7,13 @@
 
 int main(int argc, const char **argv) {
   if (argc == 1 || argc > 2) {
-    printf("Usage: /canalyze 'file.c'\n");
+    printf("%sUSAGE: /CANALYZE 'FILE.C'%s\n", red, RESET);
     return 0;
   }
   const char *file = argv[1];
   FILE *fp = fopen(file, "r");
   if (fp == NULL) {
-    printf("Can't open file for read\n");
+    printf("%sCAN'T FILE FOR READ%s\n", red, RESET);
     return -1;
   }
 
