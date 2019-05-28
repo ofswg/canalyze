@@ -13,9 +13,12 @@ char *isFunction(stringArray strArray, int string_number, int length,
     if (strArray.string[string_number].text[i] == '(') {
       open_parameter_bracket = i;
     }
-    if (strArray.string[string_number].text[length - 1] == '{') {
-      *close_bracket = 1;
-    }
+  }
+
+  if (strArray.string[string_number].text[length - 1] == '{') {
+    *close_bracket = 1;
+  } else if (strArray.string[string_number + 1].text[0] == '{') {
+    *close_bracket = 0;
   }
 
   for (size_t i = open_parameter_bracket; i < length; i++) {
@@ -26,7 +29,7 @@ char *isFunction(stringArray strArray, int string_number, int length,
   for (size_t i = 0; i < open_parameter_bracket; i++) {
     if (strArray.string[string_number].text[open_parameter_bracket - 1] ==
         ' ') { // Если последний символ Пробел
-      strArray.string[string_number].text[open_parameter_bracket - 1] = '\0';
+      return NULL;
     }
     if (strArray.string[string_number].text[i] ==
         ' ') { // Узнаем, где стоит пробел
@@ -45,9 +48,11 @@ char *isFunction(stringArray strArray, int string_number, int length,
             strArray.string[string_number].text[j + 1];
       }
     }
+
     if (strArray.string[string_number].text[0] == '(') {
       return NULL;
     }
+
     nameF = (char *)calloc((size_t)strlen(strArray.string[string_number].text),
                            sizeof(char));
     nameF = strArray.string[string_number].text;
@@ -88,7 +93,21 @@ functionArray getFunctions(stringArray *strArray) {
         size_t k = 0, step = i;
         unsigned int open_bracket_count = close_bracket,
                      close_bracket_count = 0, last_bracket = 0;
+
         while (k == 0) { // Подсчет открывающий и закрывающих скобок
+
+          if (strstr(strArray->string[step].text, nameFunction) != NULL) {
+            result.array[resulted_array_counter].open_bracket_string_number =
+                (int)step;
+            result.array[resulted_array_counter].str_number = (int)step;
+          }
+          if (strstr(strArray->string[step].text, nameFunction) != NULL &&
+              strchr(&strArray->string[step + 1].text[0], '{') != NULL) {
+            result.array[resulted_array_counter].open_bracket_string_number =
+                (int)step + 1;
+            result.array[resulted_array_counter].str_number = (int)step;
+          }
+
           if (strchr(strArray->string[step].text, '{') != NULL) {
             open_bracket_count++;
           } else if (strchr(strArray->string[step].text, '}') != NULL) {
@@ -103,8 +122,12 @@ functionArray getFunctions(stringArray *strArray) {
           }
         }
 
-        printf("%s %d\n", nameFunction, last_bracket);
-
+        result.array[resulted_array_counter].close_bracket_string_number = last_bracket;
+        for (int k = result.array[resulted_array_counter].open_bracket_string_number;
+             k <= result.array[resulted_array_counter].close_bracket_string_number;
+             k++) {
+          strArray->string[k].types[0] = FUNCTION;
+        }
         resulted_array_counter++; // Счетчик кол-ва функций
       }
     }
