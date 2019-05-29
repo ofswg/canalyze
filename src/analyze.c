@@ -135,7 +135,8 @@ functionArray getFunctions(stringArray *strArray) {
 
 int isVariable(stringArray strArray, int string_number, sVariable *variable, int *array_counter) {
   // Избавляемся от строк с подключением библиотек и пустых строк
-  if (strArray.string[string_number].text[0] == '#' || strArray.string[string_number].text[0] == '\0') {
+  if (strArray.string[string_number].text[0] == '#' || strArray.string[string_number].text[0] == '\0'
+      || strchr(strArray.string[string_number].text, '(') != NULL) {
     return 0;
   }
 
@@ -205,7 +206,7 @@ int isVariable(stringArray strArray, int string_number, sVariable *variable, int
       variable[resulted_array_counter].variable_name = nameF;
       variable[resulted_array_counter].string_number = string_number;
 
-      //printf("[%d - %d] %s\n", (int)string_number + 1, space_in_remaining_line, variable[resulted_array_counter].variable_name);
+    //  printf("[%d - %d] %s - %u\n", (int)string_number + 1, resulted_array_counter, variable[resulted_array_counter].variable_name, variable[resulted_array_counter].types);
       space_in_remaining_line = 0;
       resulted_array_counter++;
     }
@@ -217,22 +218,54 @@ int isVariable(stringArray strArray, int string_number, sVariable *variable, int
 }
 
 variableArray getGlobalVariables(stringArray *strArray) {
-  variableArray result;
-  result.array = malloc(8 * sizeof(sVariable));
+  variableArray resultGlobalVariable;
+  int array_counter = 0;
+  int index = 0;
+  resultGlobalVariable.array = malloc(8 * sizeof(sVariable));
 
+  printf("Global Variable:\n");
   for (size_t i = 0; i < strArray->capacity; i++) {
     if (strArray->string[i].types[0] != FUNCTION) {
-      int array_counter = 0;
-      if (isVariable(*strArray, i, &result.array[0], &array_counter) == 1) {
+      if (isVariable(*strArray, i, &resultGlobalVariable.array[index], &array_counter) == 1) {
         for (size_t j = 0; j < array_counter; j++) {
-          printf("[%d] %s\n", (int)i, result.array[j].variable_name);
+          printf("[%d] %s\n", (int)i, resultGlobalVariable.array[j].variable_name);
+        }
+        strArray->string[i].types[1] = VAR_GLOBAL;
+        index++;
+      }
+    }
+  }
+
+  resultGlobalVariable.capacity = array_counter;
+  return resultGlobalVariable;
+}
+
+variableArray getNonGlobalVariables(stringArray *strArray, functionArray funcArray) {
+  variableArray resultNonGlobalVariable;
+  size_t index = 0;
+  int array_counter = 0;
+  resultNonGlobalVariable.array = malloc(8 * sizeof(sVariable));
+
+  printf("\nNon Global Variable:\n");
+  for (size_t i = 0; i < funcArray.capacity; i++) {
+    for (size_t j = funcArray.array[i].open_bracket_string_number;
+                j < funcArray.array[i].close_bracket_string_number;
+                j++) {
+      if (strchr(strArray->string[j].text, ' ') != NULL &&
+          strstr(strArray->string[j].text, "return") == NULL) {
+        if (isVariable(*strArray, j, &resultNonGlobalVariable.array[index], &array_counter) == 1) {
+          for (size_t k = 0; k < array_counter; k++) {
+            printf("[%d] %s\n", (int)j + 1, resultNonGlobalVariable.array[index + k].variable_name);
+          }
+          strArray->string[j].types[1] = VAR_NON_GLOBAL;
+          index++;
         }
       }
     }
   }
 
-
-  return result;
+  resultNonGlobalVariable.capacity = index;
+  return resultNonGlobalVariable;
 }
 
 int getCallTimes(stringArray strArray, char *function_name) {

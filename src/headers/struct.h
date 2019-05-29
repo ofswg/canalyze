@@ -57,6 +57,7 @@ typedef struct {
 
 int isVariable(stringArray strArray, int string_number, sVariable *variable, int *array_counter);
 variableArray getGlobalVariables(stringArray *strArray);
+variableArray getNonGlobalVariables(stringArray *strArray, functionArray funcArray);
 functionArray getFunctions(stringArray *strArray);
 int getCallTimes(stringArray strArray, char *function_name);
 
