@@ -15,6 +15,9 @@ int canalyse(stringArray *strArray) {
     return 0;
   }
 
+  variableArray varGlobalArray = getGlobalVariables(strArray);
+  // variableArray varNonGlobalArray = getNonGlobalVariables(strArray);
+
   printfFunctions(*strArray, funcArray);
 
   return 0;

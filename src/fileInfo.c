@@ -50,3 +50,19 @@ size_t removeSpacesAtBegin(char *string) {
   ssize -= i;
   return ssize;
 }
+
+int stok(char *str, char delim, char **pointer) {
+    char *suf = str;
+    char *s;
+    pointer[0] = str;
+    int i, j = 1;
+    for (i = 0; suf[i] != '\0'; i++) {
+        if (suf[i] == delim) {
+            suf[i] = '\0';
+            s = suf + i + 1;
+            pointer[j] = s;
+            j++;
+        }
+    }
+    return j;
+}

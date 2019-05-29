@@ -8,5 +8,6 @@
 size_t fileGetContents(FILE *fp, sString *string);
 size_t fileGetString(FILE *fp);
 size_t removeSpacesAtBegin(char *string);
+int stok(char *str, char delim, char **pointer);
 
 #endif

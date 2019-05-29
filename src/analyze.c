@@ -4,12 +4,12 @@
 #include <stdlib.h>
 #include <string.h>
 
-char *isFunction(stringArray strArray, int string_number, int length,
-                 int *close_bracket) {
+char *isFunction(stringArray strArray, int string_number, int length, int *close_bracket) {
   char *nameF = NULL;
   int open_parameter_bracket, space_in_remaining_line;
 
-  for (size_t i = 0; i < length; i++) { // Получаем расположение скобки в строке
+  // Получаем расположение скобки в строке
+  for (size_t i = 0; i < length; i++) {
     if (strArray.string[string_number].text[i] == '(') {
       open_parameter_bracket = i;
     }
@@ -21,31 +21,30 @@ char *isFunction(stringArray strArray, int string_number, int length,
     *close_bracket = 0;
   }
 
+  // "int main() {" -> "int main"
   for (size_t i = open_parameter_bracket; i < length; i++) {
-    strArray.string[string_number].text[i] =
-        '\0'; // "int main() {" -> "int main"
+    strArray.string[string_number].text[i] = '\0';
   }
 
   for (size_t i = 0; i < open_parameter_bracket; i++) {
-    if (strArray.string[string_number].text[open_parameter_bracket - 1] ==
-        ' ') { // Если последний символ Пробел
+    // Если последний символ Пробел
+    if (strArray.string[string_number].text[open_parameter_bracket - 1] == ' ') {
       return NULL;
     }
-    if (strArray.string[string_number].text[i] ==
-        ' ') { // Узнаем, где стоит пробел
+    // Узнаем, где стоит пробел
+    if (strArray.string[string_number].text[i] == ' ') {
       space_in_remaining_line = i;
     }
   }
 
-  if (strchr(strArray.string[string_number].text, ' ') !=
-      NULL) { // Проверка на наличие пробела
+  // Проверка на наличие пробела
+  if (strchr(strArray.string[string_number].text, ' ') != NULL) {
     for (size_t i = 0; i < space_in_remaining_line + 1; i++) {
       for (size_t j = 0; j < open_parameter_bracket; j++) {
         if (strArray.string[string_number].text[j] == '=') {
           return NULL;
         }
-        strArray.string[string_number].text[j] = // "int main" -> "main"
-            strArray.string[string_number].text[j + 1];
+        strArray.string[string_number].text[j] = strArray.string[string_number].text[j + 1];
       }
     }
 
@@ -53,8 +52,7 @@ char *isFunction(stringArray strArray, int string_number, int length,
       return NULL;
     }
 
-    nameF = (char *)calloc((size_t)strlen(strArray.string[string_number].text),
-                           sizeof(char));
+    nameF = (char *)calloc((size_t)strlen(strArray.string[string_number].text), sizeof(char));
     nameF = strArray.string[string_number].text;
   } else {
     return NULL;
@@ -64,6 +62,7 @@ char *isFunction(stringArray strArray, int string_number, int length,
 }
 
 functionArray getFunctions(stringArray *strArray) {
+
   functionArray result;
   result.array = calloc(8, sizeof(sFunction));
 
@@ -71,17 +70,15 @@ functionArray getFunctions(stringArray *strArray) {
   for (size_t i = 0; i < strArray->capacity - 1; i++) {
     char *nameFunction;
     length = strlen(strArray->string[i].text);
+    // Если в строке есть ( и в конце строки стоит { или в начале следующей строки стоит {
     if (strchr(strArray->string[i].text, '(') != NULL &&
         (strArray->string[i].text[length - 1] == '{' ||
          strArray->string[i + 1].text[0] == '{')) {
-      // Если в строке есть ( и в конце строки стоит { или в начале следующей
-      // строки стоит {
       int close_bracket = 0;
-      if ((nameFunction = isFunction(*strArray, (int)i, (int)length,
-                                     &close_bracket)) != NULL) {
-        // Если в строке есть функция - вернет название функции, иначе NULL
+      // Если в строке есть функция - вернет название функции, иначе NULL
+      if ((nameFunction = isFunction(*strArray, (int)i, (int)length, &close_bracket)) != NULL) {
+        // Если функция возвращает указатель на какой-то тип данных
         if (nameFunction[0] == '*') {
-          // Если функция возвращает указатель на какой-то тип данных
           nameFunction[0] = ' ';
           removeSpacesAtBegin(nameFunction);
         }
@@ -94,17 +91,15 @@ functionArray getFunctions(stringArray *strArray) {
         unsigned int open_bracket_count = close_bracket,
                      close_bracket_count = 0, last_bracket = 0;
 
-        while (k == 0) { // Подсчет открывающий и закрывающих скобок
-
+        // Подсчет открывающий и закрывающих скобок
+        while (k == 0) {
           if (strstr(strArray->string[step].text, nameFunction) != NULL) {
-            result.array[resulted_array_counter].open_bracket_string_number =
-                (int)step;
+            result.array[resulted_array_counter].open_bracket_string_number = (int)step;
             result.array[resulted_array_counter].str_number = (int)step;
           }
           if (strstr(strArray->string[step].text, nameFunction) != NULL &&
               strchr(&strArray->string[step + 1].text[0], '{') != NULL) {
-            result.array[resulted_array_counter].open_bracket_string_number =
-                (int)step + 1;
+            result.array[resulted_array_counter].open_bracket_string_number = (int)step + 1;
             result.array[resulted_array_counter].str_number = (int)step;
           }
 
@@ -134,6 +129,108 @@ functionArray getFunctions(stringArray *strArray) {
   }
 
   result.capacity = (unsigned int)resulted_array_counter;
+
+  return result;
+}
+
+int isVariable(stringArray strArray, int string_number, sVariable *variable, int *array_counter) {
+  // Избавляемся от строк с подключением библиотек и пустых строк
+  if (strArray.string[string_number].text[0] == '#' || strArray.string[string_number].text[0] == '\0') {
+    return 0;
+  }
+
+  char *nameF = (char *)calloc((size_t)strlen(strArray.string[string_number].text), sizeof(char));
+  char *pointer[20];
+  int length_pointer, space_in_remaining_line;
+  unsigned int length;
+  int resulted_array_counter = 0;
+
+  if (strchr(strArray.string[string_number].text, ';') != NULL) {
+    length_pointer = stok(strArray.string[string_number].text, ',', pointer);
+    for (size_t i = 0; i < length_pointer; i++) {
+      length = strlen(pointer[i]);
+      pointer[i] = pointer[i] + 1;
+      if (strchr(pointer[i], '=') != NULL) {
+        for (size_t step = 0; step < length; step++) {
+          if (pointer[i][step] == ' ') {
+            for (size_t f = step; f < length; f++) {
+              pointer[i][f] = pointer[i][f + 1];
+            }
+          }
+        }
+        char *variableString[20];
+        int length_variable;
+
+        length_variable = stok(pointer[i], '=', variableString);
+        nameF = variableString[0];
+        variable[resulted_array_counter].variable_value = variableString[1];
+      } else {
+        if (strchr(pointer[i], ';') != NULL) {
+          unsigned int count = 0;
+          for (size_t j = 0; j < length; j++) {
+            if (pointer[i][j] == ';') {
+              count++;
+            }
+            if (count == 1) {
+              pointer[i][j] = '\0';
+            }
+          }
+        }
+        if (strchr(pointer[i], ' ') != NULL) {
+          for (size_t j = 0; j < length; j++) {
+            if (pointer[i][j] == ' ') {
+              space_in_remaining_line = (int)j;
+            }
+          }
+        } else if (strchr(pointer[i], '[') != NULL) {
+          unsigned int count = 0;
+          for (size_t j = 0; j < length; j++) {
+            if (pointer[i][j] == '[') {
+              count++;
+            }
+            if (count == 1) {
+              pointer[i][j] = '\0';
+            }
+          }
+        }
+        if (space_in_remaining_line != 0) {
+          for (size_t k = 0; k < space_in_remaining_line + 1; k++) {
+            for (size_t j = 0; j < length - 1; j++) {
+              pointer[i][j] = pointer[i][j + 1];
+            }
+          }
+        }
+        nameF = pointer[i];
+      }
+      variable[resulted_array_counter].variable_name = nameF;
+      variable[resulted_array_counter].string_number = string_number;
+
+      //printf("[%d - %d] %s\n", (int)string_number + 1, space_in_remaining_line, variable[resulted_array_counter].variable_name);
+      space_in_remaining_line = 0;
+      resulted_array_counter++;
+    }
+  } else {
+    return 0;
+  }
+  *array_counter = resulted_array_counter;
+  return 1;
+}
+
+variableArray getGlobalVariables(stringArray *strArray) {
+  variableArray result;
+  result.array = malloc(8 * sizeof(sVariable));
+
+  for (size_t i = 0; i < strArray->capacity; i++) {
+    if (strArray->string[i].types[0] != FUNCTION) {
+      int array_counter = 0;
+      if (isVariable(*strArray, i, &result.array[0], &array_counter) == 1) {
+        for (size_t j = 0; j < array_counter; j++) {
+          printf("[%d] %s\n", (int)i, result.array[j].variable_name);
+        }
+      }
+    }
+  }
+
 
   return result;
 }

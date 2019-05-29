@@ -26,6 +26,7 @@ typedef struct {
   char *variable_value;       // Значение
   unsigned int string_number; // Номер строки с переменной
   type types;                 // Тип переменной
+  int capacity;
 } sVariable;
 
 // Хранит информацию о функции
@@ -54,6 +55,8 @@ typedef struct {
   unsigned int capacity; // Размер массива
 } variableArray;
 
+int isVariable(stringArray strArray, int string_number, sVariable *variable, int *array_counter);
+variableArray getGlobalVariables(stringArray *strArray);
 functionArray getFunctions(stringArray *strArray);
 int getCallTimes(stringArray strArray, char *function_name);
 
