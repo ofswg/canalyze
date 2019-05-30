@@ -238,7 +238,7 @@ variableArray getGlobalVariables(stringArray *strArray) {
 
 variableArray getNonGlobalVariables(stringArray *strArray, functionArray funcArray) {
   variableArray resultNonGlobalVariable;
-  int index = 0, array_counter = 0, index_array = 0;
+  int index = 0, array_counter = 0;
   resultNonGlobalVariable.array = malloc(8 * sizeof(sVariable));
 
   for (size_t i = 0; i < funcArray.capacity; i++) {
@@ -249,8 +249,6 @@ variableArray getNonGlobalVariables(stringArray *strArray, functionArray funcArr
           strstr(strArray->string[j].text, "return") == NULL) {
         if (isVariable(*strArray, j, &resultNonGlobalVariable.array[index], &array_counter) == 1) {
           strArray->string[j].types[1] = VAR_NON_GLOBAL;
-          index_array += array_counter;
-
           index++;
         }
       }
