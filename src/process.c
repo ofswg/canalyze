@@ -18,10 +18,30 @@ int canalyse(stringArray *strArray) {
   variableArray varGlobalArray = getGlobalVariables(strArray);
   variableArray varNonGlobalArray = getNonGlobalVariables(strArray, funcArray);
 
+  printf("Var Global: %d\n", varGlobalArray.capacity);
+  for (size_t i = 0; i < varGlobalArray.capacity; i++) {
+    printf("[%d] %s\n", (int)i, varGlobalArray.array[i].variable_name);
+  }
+
+  printf("Var Non Global: %d\n", varNonGlobalArray.capacity);
+  for (size_t i = 0; i < varNonGlobalArray.capacity; i++) {
+    printf("[%d] %s\n", (int)i, varNonGlobalArray.array[i].variable_name);
+  }
+
   printfFunctions(*strArray, funcArray);
+  // findVariableConflicts(*strArray, varGlobalArray, varNonGlobalArray, funcArray);
 
   return 0;
 }
+
+/* int findVariableConflicts(stringArray strArray, variableArray global, variableArray non_global, functionArray funcArray) {
+  for (size_t i = 0; i < global.capacity; i++) {
+    for (size_t j = 0; j < non_global.capacity; j++) {
+
+    }
+  }
+  return 0;
+} */
 
 void printfFunctions(stringArray strArray, functionArray funcArray) {
   printf("\n%sFUNCTION:\t\tCALL TIMES:%s\n", red, RESET);
