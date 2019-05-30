@@ -55,7 +55,8 @@ int findVariableConflicts(stringArray strArray, variableArray global, variableAr
           non_global.array[j].string_number < funcArray.array[i].close_bracket_string_number) {
             for (size_t k = j; k < non_global.capacity; k++) {
               if (strcmp(non_global.array[j].variable_name, non_global.array[k].variable_name) == 0 &&
-                         non_global.array[j].string_number != non_global.array[k].string_number) {
+                         non_global.array[j].string_number != non_global.array[k].string_number &&
+                         funcArray.array[i].close_bracket_string_number > non_global.array[k].string_number && non_global.array[k].string_number > funcArray.array[i].open_bracket_string_number) {
                     printf("%sERROR: CONFLICTING VARIABLES \'%s\' IN FUNCTION \'%s\' AT LINES %d AND %d%s\n", red, non_global.array[j].variable_name, funcArray.array[i].function_name, non_global.array[j].string_number + 1, non_global.array[k].string_number + 1, RESET);
                   }
                 }
@@ -69,7 +70,7 @@ int findVariableConflicts(stringArray strArray, variableArray global, variableAr
 void printfFunctions(stringArray strArray, functionArray funcArray) {
   printf("\n%sFUNCTION:\t\tCALL TIMES:%s\n", green, RESET);
   for (size_t i = 0; i < funcArray.capacity; i++) {
-    printf("%s%s\t\t\t%d%s\n", green, funcArray.array[i].function_name,
+    printf("%s%s\t\t\t\t  %d%s\n", green, funcArray.array[i].function_name,
            getCallTimes(strArray, funcArray.array[i].function_name) - 1,
            RESET);
   }
