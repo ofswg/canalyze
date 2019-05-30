@@ -55,7 +55,6 @@ typedef struct {
   unsigned int capacity; // Размер массива
 } variableArray;
 
-int findVariableConflicts(stringArray strArray, variableArray global, variableArray non_global, functionArray funcArray);
 int isVariable(stringArray strArray, int string_number, sVariable *variable, int *array_counter);
 variableArray getGlobalVariables(stringArray *strArray);
 variableArray getNonGlobalVariables(stringArray *strArray, functionArray funcArray);

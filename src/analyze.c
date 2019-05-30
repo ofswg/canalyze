@@ -147,26 +147,58 @@ int isVariable(stringArray strArray, int string_number, sVariable *variable, int
   int resulted_array_counter = 0;
   resulted_array_counter = *array_counter;
 
+  // Проверка на наличие символа ;
   if (strchr(strArray.string[string_number].text, ';') != NULL) {
+    // Делим строку на подстроки. Разделитель - ','
     length_pointer = stok(strArray.string[string_number].text, ',', pointer);
+    // Проходим по каждй подстроке
     for (size_t i = 0; i < length_pointer; i++) {
       length = strlen(pointer[i]);
-      pointer[i] = pointer[i] + 1;
+      // Если в подстроке есть символ =
       if (strchr(pointer[i], '=') != NULL) {
         for (size_t step = 0; step < length; step++) {
-          if (pointer[i][step] == ' ') {
-            for (size_t f = step; f < length; f++) {
+          // Если первый символ в подстроке не пробел
+          if (pointer[i][0] != ' ') {
+            for (size_t f = 0; f < length - 1; f++) {
               pointer[i][f] = pointer[i][f + 1];
             }
+            step = 0;
+          }
+          // Если пробел
+          if (pointer[i][step] == ' ') {
+            for (size_t f = step; f < length - 1; f++) {
+              pointer[i][f] = pointer[i][f + 1];
+            }
+            step = length;
           }
         }
+        size_t l_length = 0;
+        // Избавляемся от пробела после названия переменной
+        for (size_t new_length = 0; new_length < length; new_length++) {
+          if (pointer[i][new_length] == ' ') {
+            l_length = 1;
+          }
+          if (l_length == 1) {
+            pointer[i][new_length] = '\0';
+          }
+        }
+        // Избавляемся от указателя
+        if (pointer[i][0] == '*') {
+          pointer[i][0] = ' ';
+          removeSpacesAtBegin(pointer[i]);
+        }
+
         char *variableString[20];
         int length_variable;
-
+        // Если переменная имеет значение, делим подстроку на подстроку подстроки
+        // Одна подстрока - название переменной, другая - ее значение.
         length_variable = stok(pointer[i], '=', variableString);
         nameF = variableString[0];
         variable[resulted_array_counter].variable_value = variableString[1];
-      } else {
+      } else { // Если в подстроке нет символа =
+        // Избавляемся от первого элемента в подстроке. Сделано для того, чтобы избавиться от пробела.
+        pointer[i] = pointer[i] + 1;
+        // Если в подстроке есть символ ';'
         if (strchr(pointer[i], ';') != NULL) {
           unsigned int count = 0;
           for (size_t j = 0; j < length; j++) {
@@ -178,13 +210,14 @@ int isVariable(stringArray strArray, int string_number, sVariable *variable, int
             }
           }
         }
+        // Если в подстроке есть пробел(ы)
         if (strchr(pointer[i], ' ') != NULL) {
           for (size_t j = 0; j < length; j++) {
             if (pointer[i][j] == ' ') {
               space_in_remaining_line = (int)j;
             }
           }
-        } else if (strchr(pointer[i], '[') != NULL) {
+        } else if (strchr(pointer[i], '[') != NULL) { // Если есть массив
           unsigned int count = 0;
           for (size_t j = 0; j < length; j++) {
             if (pointer[i][j] == '[') {
@@ -195,6 +228,7 @@ int isVariable(stringArray strArray, int string_number, sVariable *variable, int
             }
           }
         }
+        // Если есть пробел
         if (space_in_remaining_line != 0) {
           for (size_t k = 0; k < space_in_remaining_line + 1; k++) {
             for (size_t j = 0; j < length - 1; j++) {
@@ -204,6 +238,7 @@ int isVariable(stringArray strArray, int string_number, sVariable *variable, int
         }
         nameF = pointer[i];
       }
+      // Записываем все значения в структуру
       variable[resulted_array_counter].variable_name = nameF;
       variable[resulted_array_counter].string_number = string_number;
       space_in_remaining_line = 0;
